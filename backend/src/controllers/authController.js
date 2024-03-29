@@ -1,7 +1,6 @@
 const authService = require("../services/authService");
 
 const register = async (req, res) => {
-  //Try to register
   try {
     const userData = req.body; //input
 
@@ -13,7 +12,7 @@ const register = async (req, res) => {
       userId: user,
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(error.statusCode || 500).json({ message: error.message });
   }
 };
 
@@ -29,12 +28,8 @@ const login = async (req, res) => {
       userId,
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(error.statusCode || 500).json({ message: error.message });
   }
 };
 
-const someData = async (req, res) => {
-  res.send("Hurray, You just accessed a private endpoint");
-};
-
-module.exports = { register, login, someData };
+module.exports = { register, login };

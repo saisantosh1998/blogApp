@@ -7,7 +7,9 @@ const registerUser = async (userData) => {
     const existingUser = await User.findOne({ email: userData.email });
 
     if (existingUser) {
-      throw new Error("User already exists.");
+      const error = new Error("User already exists.");
+      error.statusCode = 409; // Conflict
+      throw error;
     }
 
     const user = new User(userData);
@@ -31,20 +33,23 @@ const loginUser = async (userData) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-      throw new Error("User is not found");
+      const error = new Error("User is not found");
+      error.statusCode = 404; // Not Found
+      throw error;
     }
 
     const isMatch = await user.comparePassword(password);
 
     if (!isMatch) {
-      throw new Error("Invalid Credentials");
+      const error = new Error("Invalid Credentials");
+      error.statusCode = 401; // Unauthorized
+      throw error;
     }
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
 
     return { token, user };
 
-    //password check
   } catch (error) {
     throw error;
   }

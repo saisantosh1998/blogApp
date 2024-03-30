@@ -7,7 +7,7 @@ const postSchema = new mongoose.Schema({
   },
   image: {
     type: String,
-    required: true,
+    default: 'https://images.app.goo.gl/8hh1YHkuxJZLZoFT8',
   },
   content: {
     type: String,

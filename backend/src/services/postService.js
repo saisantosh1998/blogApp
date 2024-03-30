@@ -28,9 +28,9 @@ const getPostById = async (postId) => {
   }
 };
 
-const createPost = async ({ title, content, authorId }) => {
+const createPost = async ({ title, content, authorId, image}) => {
   try {
-    const post = new Post({ title, content, author: authorId });
+    const post = new Post({ title, content, author: authorId, image});
     await post.save();
     return post;
   } catch (error) {

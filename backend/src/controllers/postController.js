@@ -22,9 +22,9 @@ const getPostById = async (req, res) => {
 
 const createPost = async (req, res) => {
   try {
-    const { title, content } = req.body;
+    const { title, content, image } = req.body;
     const authorId = req.user.id;
-    const post = await postService.createPost({ title, content, authorId });
+    const post = await postService.createPost({ title, content, authorId, image});
     res.status(201).json(post);
   } catch (error) {
     res.status(400).json({ error: error.message });

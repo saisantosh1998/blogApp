@@ -22,8 +22,10 @@ const getPostById = async (postId) => {
     const post = await Post.findById(postId)
       .populate("author")
       .populate("comments");
-      if(!post) {
-        throw new Error("Post not found").statusCode(404);
+      if (!post) {
+        const error = new Error("Post is not found");
+        error.statusCode = 404;
+        throw error;
       }
     return post;
   } catch (error) {
@@ -54,7 +56,9 @@ const deletePost = async (postId) => {
   try {
     const post = await Post.findById(postId);
     if (!post) {
-      throw new Error('Post not found');
+      const error = new Error("Post is not found");
+      error.statusCode = 404;
+      throw error;
     }
     await Post.findByIdAndDelete(postId);
   } catch (error) {

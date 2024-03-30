@@ -22,6 +22,9 @@ const getPostById = async (postId) => {
     const post = await Post.findById(postId)
       .populate("author")
       .populate("comments");
+      if(!post) {
+        throw new Error("Post not found").statusCode(404);
+      }
     return post;
   } catch (error) {
     throw error;

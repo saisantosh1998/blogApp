@@ -16,7 +16,7 @@ const getPostById = async (req, res) => {
     const post = await postService.getPostById(req.params.postId);
     res.json(post);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(error.statusCode || 500).json({ error: error.message });
   }
 };
 

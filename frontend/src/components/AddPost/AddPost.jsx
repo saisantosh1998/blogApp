@@ -20,7 +20,7 @@ const AddPost = () => {
 
   const onClose = () => {
     setIsOpen(false);
-    navigate('/');
+    navigate('/home');
   };
 
   const handleChange = (e) => {

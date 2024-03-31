@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { SnackbarProvider } from "notistack"; // Import SnackbarProvider
 import Home from "./components/Home/Home";
 import Navbar from "./components/Navbar/Navbar";
@@ -27,7 +27,8 @@ const App = () => {
           >
             <Navbar />
             <Routes>
-              <Route path="/" exact element={<Home />} />
+               <Route path="/" element={<Navigate to="/login" />} />
+              <Route path="/home" exact element={<Home />} />
               <Route path="/login" exact element={<Login />} />
               <Route path="/register" exact element={<Register />} />
               <Route path="/upload" exact element={<AddPost />} />

@@ -95,7 +95,7 @@ const PostDetails = () => {
           },
         }
       );
-      navigate('/')
+      navigate('/home');
     } catch (error) {
       console.error("Error deleting post:", error);
     }

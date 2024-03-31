@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { MyContext } from "../MyContext/MyContext";
 import {
   Typography,
@@ -12,14 +12,25 @@ import {
   CardMedia,
   Avatar,
   Stack,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  CircularProgress, // Import CircularProgress for the loading spinner
 } from "@mui/material";
+import CustomButton from "../CustomButton/CustomButton";
 
 const PostDetails = () => {
   const { postId } = useParams();
   const { isAuthenticated } = useContext(MyContext);
   const token = localStorage.getItem("token");
+  const userId = localStorage.getItem("userId");
   const [post, setPost] = useState(null);
   const [comment, setComment] = useState("");
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [loading, setLoading] = useState(true); // Loading state
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -33,6 +44,7 @@ const PostDetails = () => {
           }
         );
         setPost(response.data);
+        setLoading(false); // Set loading to false once post data is fetched
       } catch (error) {
         console.error("Error fetching post:", error);
       }
@@ -73,16 +85,54 @@ const PostDetails = () => {
     }
   };
 
+  const handleDeletePost = async () => {
+    try {
+      await axios.delete(
+        `https://blogapp-blmh.onrender.com/api/posts/${postId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      navigate('/')
+    } catch (error) {
+      console.error("Error deleting post:", error);
+    }
+  };
+
+  const handleConfirmDelete = () => {
+    setShowConfirmation(false);
+    handleDeletePost();
+  };
+
+  const publicImages = [
+    "../image1.jpg",
+    "../image2.jpg",
+    "../image3.jpg",
+    "../image4.jpg",
+  ];
+
+  const getRandomImage = () => {
+    const randomIndex = Math.floor(Math.random() * publicImages.length);
+    return publicImages[randomIndex];
+  };
+
   return (
     <div>
-      {post && (
+      {loading ? ( // Render loading spinner if loading state is true
+        <div style={{ textAlign: "center", marginTop: "50px" }}>
+          <CircularProgress />
+        </div>
+      ) : post ? ( // Render post details if post data is available
         <Grid container justifyContent="center" spacing={2}>
           <Grid item xs={10}>
             <Card
               sx={{
                 borderRadius: "10px",
                 boxShadow: "0 0 10px rgba(0, 0, 0, 0.2)",
-                margin: "2rem 0",
+                margin: "2rem 0 5rem 0",
+                position: "relative", // Position relative for absolute positioning of button
               }}
             >
               <CardMedia
@@ -92,7 +142,7 @@ const PostDetails = () => {
                   height: "20rem",
                   objectFit: "contain",
                 }}
-                image={post.image || "../default.svg"}
+                image={post.image || getRandomImage()}
                 alt={post.title}
               />
               <CardContent>
@@ -122,7 +172,6 @@ const PostDetails = () => {
                     <Typography
                       sx={{
                         color: "black",
-                        marginRight: "10px",
                         textAlign: "center",
                       }}
                     >
@@ -131,6 +180,20 @@ const PostDetails = () => {
                     <Typography variant="body2">{comment.content}</Typography>
                   </Stack>
                 ))}
+                {isAuthenticated && post.author._id === userId && (
+                  <CustomButton
+                    onClick={() => setShowConfirmation(true)}
+                    styles={{
+                      position: "absolute",
+                      backgroundColor: "red",
+                      color: "white",
+                      bottom: "10px",
+                      right: "10px",
+                    }}
+                  >
+                    Delete Post
+                  </CustomButton>
+                )}
                 {isAuthenticated && (
                   <div>
                     <TextField
@@ -143,20 +206,37 @@ const PostDetails = () => {
                       variant="outlined"
                       style={{ marginBottom: "1rem" }}
                     />
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={handleSubmitComment}
-                    >
+                    <CustomButton styles={{backgroundColor: "var(--green)", color: "white"}} onClick={handleSubmitComment}>
                       Submit Comment
-                    </Button>
+                    </CustomButton>
                   </div>
                 )}
               </CardContent>
             </Card>
           </Grid>
         </Grid>
+      ) : (
+        <Typography variant="h3" align="center">Post not found</Typography>
       )}
+      <Dialog
+        open={showConfirmation}
+        onClose={() => setShowConfirmation(false)}
+      >
+        <DialogTitle>Confirm Deletion</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to delete this post?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <CustomButton styles={{ backgroundColor: "red", color: "white" }} onClick={() => setShowConfirmation(false)} color="primary">
+            Cancel
+          </CustomButton>
+          <CustomButton styles={{backgroundColor: "var(--green)", color: "white"}} onClick={handleConfirmDelete} color="primary" autoFocus>
+            Delete
+          </CustomButton>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

@@ -20,6 +20,9 @@ const Navbar = () => {
     logout();
     window.location.href = "/login";
   };
+  const handleMyPosts = () => {
+    navigate("/", { state: { filterMyPosts: true } });
+  };
 
   return (
     <AppBar sx={{ backgroundColor: "var(--white)" }} position="static">
@@ -32,6 +35,17 @@ const Navbar = () => {
         <div>
           {username && (
             <Stack direction="row" alignItems="center" spacing={2}>
+              <Typography
+                sx={{
+                  color: "black",
+                  marginRight: "10px",
+                  textAlign: "center",
+                }}
+                onClick={handleMyPosts}
+                style={{ cursor: "pointer" }}
+              >
+                My Posts
+              </Typography>
               <CustomButton
                 styles={{ backgroundColor: "var(--green)", color: "white" }}
                 onClick={() => navigate("/upload", {state:{open:true,token}})}

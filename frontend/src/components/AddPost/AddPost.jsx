@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogTitle, TextField } from '@mui/material';
+import { Dialog, DialogContent, DialogTitle, TextField} from '@mui/material';
 import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
 import CustomButton from '../CustomButton/CustomButton'; // Import your custom button component
@@ -12,9 +12,12 @@ const AddPost = () => {
   const [postData, setPostData] = useState({
     title: '',
     content: '',
-    image: '',
   });
-  
+  const [errors, setErrors] = useState({
+    title: false,
+    content: false,
+  });
+
   const onClose = () => {
     setIsOpen(false);
     navigate('/');
@@ -30,6 +33,16 @@ const AddPost = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Check if title and content are not empty
+    if (!postData.title.trim() || !postData.content.trim()) {
+      setErrors({
+        title: !postData.title.trim(),
+        content: !postData.content.trim(),
+      });
+      return;
+    }
+
     try {
       await axios.post(
         'https://blogapp-blmh.onrender.com/api/posts',
@@ -53,32 +66,36 @@ const AddPost = () => {
         <form onSubmit={handleSubmit}>
           <TextField
             fullWidth
-            label="Title"
+            label={
+              <>
+                Title<span style={{ color: 'red' }}>*</span>
+              </>
+            }
             name="title"
             value={postData.title}
             onChange={handleChange}
             margin="normal"
+            error={errors.title}
+            helperText={errors.title && 'Title is required'}
           />
           <TextField
             fullWidth
             multiline
             rows={4}
-            label="Content"
+            label={
+              <>
+                Content<span style={{ color: 'red' }}>*</span>
+              </>
+            }
             name="content"
             value={postData.content}
             onChange={handleChange}
             margin="normal"
+            error={errors.content}
+            helperText={errors.content && 'Content is required'}
           />
-          <TextField
-            fullWidth
-            label="Image URL"
-            name="image"
-            value={postData.image}
-            onChange={handleChange}
-            margin="normal"
-          />
-          <CustomButton type="submit" styles={{ marginTop: '1rem',backgroundColor: 'var(--green)', color: 'white' }}>Add Post</CustomButton>
-          <CustomButton onClick={onClose} styles={{ marginTop: '1rem',marginLeft: '1rem',backgroundColor: 'red', color: 'white' }}>Close</CustomButton>
+          <CustomButton type="submit" styles={{ marginTop: '1rem', backgroundColor: 'var(--green)', color: 'white' }}>Add Post</CustomButton>
+          <CustomButton onClick={onClose} styles={{ marginTop: '1rem', marginLeft: '1rem', backgroundColor: 'red', color: 'white' }}>Close</CustomButton>
         </form>
       </DialogContent>
     </Dialog>

@@ -4,7 +4,8 @@ const postService = require('../services/postService');
 
 const getAllPosts = async (req, res) => {
   try {
-    const posts = await postService.getAllPosts();
+    const { userId } = req.query;
+    const posts = await postService.getAllPosts(userId);
     res.json(posts);
   } catch (error) {
     res.status(500).json({ error: error.message });

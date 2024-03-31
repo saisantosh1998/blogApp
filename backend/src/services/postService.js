@@ -2,15 +2,19 @@
 
 const Post = require("../models/Post");
 
-const getAllPosts = async () => {
+const getAllPosts = async (userId) => {
   try {
-    const posts = await Post.find().populate("author").populate({
+    let query = Post.find();
+    if (userId) {
+      query = query.where('author').equals(userId);
+    }
+    const posts = await query.populate("author").populate({
       path: 'comments',
       populate: {
         path: 'author',
         select: '-_id username email'
       }
-    });
+    }).exec();
     return posts;
   } catch (error) {
     throw error;

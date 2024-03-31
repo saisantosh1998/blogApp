@@ -21,13 +21,13 @@ const Navbar = () => {
     window.location.href = "/login";
   };
   const handleMyPosts = () => {
-    navigate("/", { state: { filterMyPosts: true } });
+    navigate("/home", { state: { filterMyPosts: true } });
   };
 
   return (
     <AppBar sx={{ backgroundColor: "var(--white)" }} position="static">
       <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
-        <Link style={{ textDecoration: "none" }} to="/">
+        <Link style={{ textDecoration: "none" }} to="/home">
           <Typography sx={{ color: "black" }} variant="h6" component="div">
             AppBlog
           </Typography>

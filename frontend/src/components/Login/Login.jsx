@@ -44,7 +44,7 @@ const Login = () => {
       enqueueSnackbar(response.data.message || "Login successful", {
         variant: "success",
       });
-      navigate("/");
+      navigate("/home");
     } catch (error) {
       if (
         error.response &&

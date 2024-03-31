@@ -21,7 +21,13 @@ const getPostById = async (postId) => {
   try {
     const post = await Post.findById(postId)
       .populate("author")
-      .populate("comments");
+      .populate({
+        path: 'comments',
+        populate: {
+          path: 'author',
+          select: '-_id username email'
+        }
+      });
       if (!post) {
         const error = new Error("Post is not found");
         error.statusCode = 404;
